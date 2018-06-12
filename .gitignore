@@ -1,0 +1,8 @@
+.metadata/
+*.class
+*.log
+.project
+*/.classpath
+*/.settings
+target/
+*.cache-main

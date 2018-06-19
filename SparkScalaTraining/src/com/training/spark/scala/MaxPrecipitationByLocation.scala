@@ -5,7 +5,7 @@ import org.apache.spark.SparkContext._
 import org.apache.log4j._
 import scala.math.max
 
-object MaxTemp {
+object MaxPrecipitationByLocation {
 
   def parserLines(line: String) = {
     val fields = line.split(",")

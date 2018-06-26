@@ -1,4 +1,4 @@
-package com.sundogsoftware.spark
+package com.training.spark.scala
 
 import org.apache.spark._
 import org.apache.spark.SparkContext._
@@ -21,7 +21,10 @@ object WordCount {
     
     // Split into words separated by a space character
     val words = input.flatMap(x => x.split(" "))
-    
+
+    //que pasaria
+    //val words2 = input.map(x => x.split(" "))
+
     // Count up the occurrences of each word
     val wordCounts = words.countByValue()
     

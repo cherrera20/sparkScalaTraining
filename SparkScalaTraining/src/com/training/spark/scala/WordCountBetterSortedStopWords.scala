@@ -3,9 +3,11 @@ package com.training.spark.scala
 import org.apache.spark._
 import org.apache.spark.SparkContext._
 import org.apache.log4j._
+import org.apache.spark.rdd.RDD.rddToOrderedRDDFunctions
+import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
 
 /** Count up how many of each word occurs in a book, using regular expressions and sorting the final results */
-object WordCountBetterSorted {
+object WordCountBetterSortedStopWords {
  
   /** Our main function where the action happens */
   def main(args: Array[String]) {

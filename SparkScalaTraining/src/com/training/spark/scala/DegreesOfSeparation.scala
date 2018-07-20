@@ -1,4 +1,4 @@
-package com.sundogsoftware.spark
+package com.training.spark.scala
 
 import org.apache.spark._
 import org.apache.spark.SparkContext._
@@ -9,12 +9,13 @@ import scala.collection.mutable.ArrayBuffer
 
 /** Finds the degrees of separation between two Marvel comic book characters, based
  *  on co-appearances in a comic.
+ *  BFS algoritmo
  */
 object DegreesOfSeparation {
   
   // The characters we want to find the separation between.
-  val startCharacterID = 5306 //SpiderMan
-  val targetCharacterID = 14 //ADAM 3,031 (who?)
+  val startCharacterID =  5306 //SpiderMan 5988
+  val targetCharacterID =  14 //ADAM 3,031 (who?)748
   
   // We make our accumulator a "global" Option so we can reference it in a mapper later.
   var hitCounter:Option[LongAccumulator] = None
@@ -41,21 +42,23 @@ object DegreesOfSeparation {
     }
     
     // Default distance and color is 9999 and white
+    //white color means "Unexplore"
     var color:String = "WHITE"
     var distance:Int = 9999
     
     // Unless this is the character we're starting from
     if (heroID == startCharacterID) {
+      //Gray means "Need to be explored"      
       color = "GRAY"
       distance = 0
     }
-    
+   
     return (heroID, (connections.toArray, distance, color))
   }
   
   /** Create "iteration 0" of our RDD of BFSNodes */
   def createStartingRdd(sc:SparkContext): RDD[BFSNode] = {
-    val inputFile = sc.textFile("../marvel-graph.txt")
+    val inputFile = sc.textFile("../Marvel-graph.txt")
     return inputFile.map(convertToBFS)
   }
   
@@ -171,6 +174,7 @@ object DegreesOfSeparation {
     hitCounter = Some(sc.longAccumulator("Hit Counter"))
     
     var iterationRdd = createStartingRdd(sc)
+    iterationRdd.take(3).foreach(println)
     
     var iteration:Int = 0
     for (iteration <- 1 to 10) {
@@ -180,6 +184,7 @@ object DegreesOfSeparation {
       // reduce stage. If we encounter the node we're looking for as a GRAY
       // node, increment our accumulator to signal that we're done.
       val mapped = iterationRdd.flatMap(bfsMap)
+      mapped.take(3).foreach(println)
       
       // Note that mapped.count() action here forces the RDD to be evaluated, and
       // that's the only reason our accumulator is actually updated.  
@@ -193,7 +198,6 @@ object DegreesOfSeparation {
           return
         }
       }
-      
       // Reducer combines data for each character ID, preserving the darkest
       // color and shortest path.      
       iterationRdd = mapped.reduceByKey(bfsReduce)
